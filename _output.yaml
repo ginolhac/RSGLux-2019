@@ -5,7 +5,7 @@ iosp::ioslides_plus:
   logo: img/uni.png
   smaller: yes
   widescreen: yes
-  self_contained: false
+  self_contained: true
   lib_dir: site_libs
   fig_retina: ~
   css: tweaks.css
