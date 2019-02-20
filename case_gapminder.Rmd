@@ -2,7 +2,7 @@
 title: "Case study - gapminder"
 subtitle: "tidy models with `broom`"
 author: "A. Ginolhac, E. Koncina, R. Krause"
-date: "2019-02-27"
+date: "2019-03-06"
 output:
   iosp::ioslides_plus
 ---

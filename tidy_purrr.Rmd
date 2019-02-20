@@ -1329,11 +1329,21 @@ bench::mark(
 
 [http://tinyurl.com/RSGLux-tidy](https://ginolhac.github.io/RSGLux-2019/tidy_purrr.html)
 
-### See you next week! {.box-6 .practical .outline .center-text .large .stretch}
+### See you in 2 week! {.box-6 .practical .outline .center-text .large .stretch}
 
 interactive case study using the `gapminder` dataset
 
-###  {.box-6 .offset-3 .advice .center-text .xx-large .icon-small}
+### rworkshop {.box-7 .practical .icon-small}
+
+
+![](img/uni_elixir.png)
+
+- _Data processing with R tidyverse_ in **May 2019**: Tuesday 14th - Friday 17th
+- **no** fees
+- **2 ECTS** for the PhD students who attend the workshop and complete a short project.
+
+
+###  {.box-5 .advice .center-text .xx-large .middle .icon-small}
 
 ![](img/00/question.png)
 
