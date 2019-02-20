@@ -1294,7 +1294,18 @@ bench::mark(
 ```
 
 
-## Before we stop {.nvs1}
+## Before we stop {.nvs2}
+
+### Acknowledgments {.box-8 .offset-3 .intro}
+
+* Jennifer Bryan ([LEGO pictures](https://github.com/Jenniferbc/lego-rstats), courtesy CC licence)
+* Hadley Wickham
+* David Robinson
+* Eric Koncina ([iosp](https://github.com/koncina/iosp) _R_ package for slides)
+* Ian Lyttle
+* Robert Rudis
+
+%end%
 
 ### Further reading {.box-10 .offset-1 .intro .outline .icon-small}
 
@@ -1309,23 +1320,22 @@ bench::mark(
 - Bruno Rodrigues - [Functional programming [...] for data munging with R](https://b-rodrigues.github.io/fput/)
 - Lise Vaudor - [R-atique](http://perso.ens-lyon.fr/lise.vaudor/) (_in french_)
 
-### Acknowledgments {.box-10 .offset-1 .intro}
-
-* Hadley Wickham
-* Robert Rudis
-* Jennifer Bryan ([LEGO pictures](https://github.com/Jenniferbc/lego-rstats), courtesy CC licence)
-* Ian Lyttle
-* David Robinson
 
 
-## Slides online {.build .vs2}
 
-### on github {.box-8 .offset-2 .intro .outline .show .x-large .center-text}
+## Slides online {.vs2}
 
-- [tidy data and functional programming](XX)
+### [Rmd on github](https://github.com/ginolhac/RSGLux-2019) {.box-6 .intro .outline .xx-large .center-text}
 
-### See you next week! {.box-8 .offset-2 .practical .outline .center-text}
+[http://tinyurl.com/RSGLux-tidy](https://ginolhac.github.io/RSGLux-2019/tidy_purrr.html)
+
+### See you next week! {.box-6 .practical .outline .center-text .large .stretch}
 
 interactive case study using the `gapminder` dataset
 
+###  {.box-6 .offset-3 .advice .center-text .xx-large .icon-small}
+
+![](img/00/question.png)
+
+**Questions?**
 
