@@ -23,7 +23,7 @@ ggplot2::theme_set(ggplot2::theme_bw(14))
 - use `dplyr` / `purrr` for efficient data manipulation
 - tidying multiple linear models using `broom` 
 - managing related things together in **one** `tibble`
-- summarise findings in one `gglot` using relevant aesthetics
+- summarise findings in one `ggplot` using relevant aesthetics
 
 ### guided practical {.box-8 .offset-2 .practical .icon-small}
 
@@ -50,15 +50,20 @@ Tutorial based on the great conference by [Hadley Wickham][1]
 
 see [pdf on rstudio' github repository](https://github.com/rstudio/cheatsheets/blob/master/source/pdfs/list-columns-cheatsheet.pdf)
 
-## list-column cheatsheet | reminder {.vs1}
+## Keep all analyse steps (cols) per group (rows) together | reminder {.vs1}
 
-### workflow {.intro .outline .offset-2 .box-8 .middle .center-img}
+### workflow from last time {.intro .outline .offset-2 .box-8 .middle .center-img}
 
-![](img/11/workflow_cheatsheet.png)
+```{r}
+mtcars %>%
+  group_nest(cyl) %>%
+  mutate(model = map(data, ~lm(mpg ~ wt, data = .x)),
+         summary = map(model, summary),
+         r_squared = map_dbl(summary, "r.squared"))
+```
 
 %end%
 
-see [pdf on rstudio' github repository](https://github.com/rstudio/cheatsheets/blob/master/source/pdfs/list-columns-cheatsheet.pdf)
 
 ## Gapminder | [gapminder](http://www.gapminder.org/) is a fact tank
 
@@ -74,7 +79,7 @@ see [pdf on rstudio' github repository](https://github.com/rstudio/cheatsheets/b
 
 ![](img/11/hrosling.jpg)
 
-- died one year ago
+- died 2 years ago
 - fundamentaly optimistic
 - great [talk](https://www.ted.com/talks/hans_rosling_shows_the_best_stats_you_ve_ever_seen)
 
@@ -86,8 +91,9 @@ see [pdf on rstudio' github repository](https://github.com/rstudio/cheatsheets/b
 ![](img/00/question.png)
 
 - install the `gapminder` package
-- load `gapminder` and `tidyverse`
-- **plot** the `life expectency` ~ `year`
+- load `gapminder` and `tidyverse` packages
+- use the pipe `%>%` to pass `gapminder` to `ggplot()`
+- **plot** the `life expectency` (`y`) ~ `year` (`x`)
 - use `geom_line()`
 
 ###  warning! {.box-4 .offset-4 .warning .icon}
@@ -116,30 +122,33 @@ gapminder %>%
 
 ![](img/00/question.png)
 
-- add a column named `year1950` which is `year` - 1950
-- **nest** the `tibble` by country, add the continent
-- how many rows will you get?
+- add a column using `mutate()` named `year1950` which is: \
+`year` - 1950
+- nest with `group_nest()` the tibble by `country` and `continent`
+- how many rows will you get? \
+expectations help catching mistakes
 - save the object as `by_country`
 
-## Keep related things together | `nest()` {.vs1}
+## Keep related things together | `group_nest()` {.vs1}
 
-### nest _per_ country {.box-6 .code .outline}
+### nest _per_ country {.box-8 .code .outline}
 
 ```{r}
 by_country <- gapminder %>%
   mutate(year1950 = year - 1950) %>%
   group_by(continent, country) %>%
-  nest()
+  group_nest()
 by_country
 ```
 
-### helpers {.box-6 .middle .advice .outline}
+### helpers {.box-4 .middle .advice .outline}
 
-- `year1950` will help to get count oldest date
+- be default the list column is named `data`
+- `year1950` will help to get meaningful intercepts
 - add `continent` to `group_by()` to keep the column along the `country`
 
 
-## One country example | Germany {.vs1 .build}
+## One country example | Germany {.build}
 
 ### from original tibble {.box-6 .practical .stretch .compact-output}
 
@@ -155,7 +164,7 @@ by_country %>%
   filter(country == "Germany")
 by_country %>%
   filter(country == "Germany") %>%
-  pull(data)
+  unnest(data)
 ```
 
 ## What happens in the DATA FRAME, stays in the data frame {.vs2 .center-img}
@@ -187,10 +196,10 @@ vembedr::embed_youtube("4MfUCX_KpdE") %>%
 ![](img/00/question.png)
 
 - using `by_country`
-- add a new column `model` with linear regressions of **LifeExp** on **year1950**
+- add a new column `model` with linear regressions of `LifeExp` on `year1950`
 - save as `by_country_lm`
 
-### ask yourself {.box-8 .offset-2 .warning .icon-small}
+### ask yourself {.box-8 .offset-2 .warning .outline .icon-small}
 
 ![](img/00/warning.png)
 
@@ -206,6 +215,45 @@ by_country_lm <- by_country %>%
 by_country_lm
 ```
 
+## Explore a list column {.slide-practical .vs3}
+
+###  {.box-10 .offset-1 .advice .outline .icon-small}
+
+![](img/00/question.png)
+
+- count # rows per country using the `data` column
+- does any country have less data than others?
+- plot `lifeExp` ~ `year1950` for **Bulgaria** by unnesting `data`
+
+### reminder {.box-8 .offset-2 .warning .outline}
+
+- a **list column** is a list, you need to iterate through elements
+- for the plotting the steps are:
+    + `filter()` for the desired country
+    + `unnest()` raw `data`
+    + pipe to `ggplot()`
+
+
+## Explore a list column {.vs1 .build}
+
+```{r, width=6, title = "count how many rows per country", class = "show"}
+by_country_lm %>%
+  mutate(n = map_int(data, nrow)) %>%
+  select(country, n)
+by_country_lm %>%
+  mutate(n = map_int(data, nrow)) %>%
+  select(n) %>%
+  distinct()
+```
+
+
+```{r, width=6, title = "Bulgaria"}
+by_country_lm %>%
+  filter(country == "Bulgaria") %>%
+  unnest(data) %>%
+  ggplot(aes(x = year1950, y = lifeExp)) +
+  geom_line()
+```
 
 
 ## Explore nested tibble {.slide-practical .vs3}
@@ -214,34 +262,20 @@ by_country_lm
 
 ![](img/00/question.png)
 
-- count # rows per country using the `data` column
-- plot `lifeExp` ~ `year1950` for **Rwanda** by unnesting `data`
 - display the `summary` for the linear model of **Rwanda**
 - how do you interpret the $r^2$ for this particular model?
 
 ### reminder {.box-8 .offset-2 .warning .outline}
 
+- `filter()` for the desired country
 - **list column** is a list
 - to extract the `x`th element, use the `pluck("model", x)` `purrr` syntax
+- pipe this unique model to `summary()`
 
-## Explore nested tibble {.build}
-
-### `lifeExp` & `year1950` for Rwanda {.box-5 .practical .stretch .show}
-
-```{r, class = "compact-output"}
-by_country_lm %>%
-  filter(country == "Rwanda") %>%
-  unnest(data) %>%
-  select(lifeExp, year1950)
-```
-```{r, include = FALSE}
-by_country_lm %>% 
-  mutate(n_nest = map_int(data, nrow))
-```
+## Explore nested tibble {.vs1 .build}
 
 
-
-### lm for Rwanda {.box-7 .practical}
+### linear model for Rwanda {.box-8 .offset-2 .practical .show}
 
 ```{r, class = "compact-output"}
 by_country_lm %>%
@@ -250,9 +284,14 @@ by_country_lm %>%
   summary()
 ```
 
-### {.box-8 .offset-2 .warning}
+### {.box-6 .warning}
 
 $r^2$ is close to 0, linearity sounds broken
+
+### {.box-6 .advice .center-text .stretch}
+
+`broom` will cleanup lm elements into tibbles
+
 
 ## broom cleanup {.center-img}
 
@@ -265,19 +304,19 @@ $r^2$ is close to 0, linearity sounds broken
 
 ![](img/00/question.png)
 
-- using `by_country_lm`, add 4 new columns
+- using `by_country_lm`, add 4 new columns:
     + `glance`, using the broom function on the `model` column
     + `tidy`, using the broom function on the `model` column
     + `augment`, using the broom function on the `model` column
     + `rsq` from the `glance` column
 - save as `models`
-- why extracting the $r^2$ in the main tibble?
+- why extracting the $r^2$ in the main tibble is useful?
 
 ### reminder {.box-10 .offset-1 .warning .outline}
 
 - use `map` when dealing with a list column 
-- in `map`, shortcut with quotes (like `"r.squared"`) extract the specifed variable
-- remenber, `map` takes and returns a **list**. Use `map_dbl()` to coerce output to **doubles**
+- in `map`, shortcut with quotes (like `"r.squared"`) extract the specified variable
+- remember, `map` takes and returns a **list**. Use `map_dbl()` to coerce output to **doubles**
 
 ## Tidying models | extract from nested lists {.vs1}
 
@@ -308,9 +347,9 @@ models
 
 # Exploratory plots
 
-## plotting r square for countries{.slide-practical .vs3}
+## plotting $r^2$ for countries{.slide-practical .vs3}
 
-###  {.box-10 .offset-1 .advice .outline .icon-small}
+### {.box-10 .offset-1 .advice .outline .icon-small}
 
 ![](img/00/question.png)
 
@@ -323,9 +362,9 @@ models
 
 to reorder discrete values:
 
-- must be `factor`
+- must be of data type `factor`
 - use the `forcats` package
-- use the `fct_reorder()` to reorder with a continuous variable
+- `fct_reorder()` to reorder according to a continuous variable
 
 ## Do linear models fit all countries? | snake plot {.nvs1}
 
@@ -349,7 +388,7 @@ models %>%
 
 
 
-## display the real data for countries with a low rsquare value {.slide-practical .vs3}
+## display the real data for countries with a low $r^2$ {.slide-practical .vs1}
 
 ###  {.box-10 .offset-1 .advice .outline .icon-small}
 
@@ -363,11 +402,32 @@ models %>%
 - facet per country
 - same questions for the **top 20** $r^2$
 
+
+### reminder {.box-8 .offset-2 .warning .outline}
+
+- `arrange(col)` will sort according to `col`
+- `top_n(x, col)` not only sort `col` but return only `x` top entries
+- `top_n(x, desc(col))` same but sort from lowest values 
+
 ## Exploratory plots | focus on non-linear trends {.nvs1}
 
 ```{r, row = c(6, 6), fig.height = 6, fig.width = 6}
 models %>%
   top_n(20, desc(rsq)) %>%
+  unnest(data) %>%
+  ggplot(aes(x = year, y = lifeExp)) +
+  geom_line(aes(colour = continent)) +
+  facet_wrap(~ country) +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1),
+        legend.position = "bottom")
+```
+
+## Exploratory plots | focus on linear trends {.nvs1}
+
+```{r, row = c(6, 6), fig.height = 6, fig.width = 6}
+models %>%
+  top_n(20, rsq) %>%
   unnest(data) %>%
   ggplot(aes(x = year, y = lifeExp)) +
   geom_line(aes(colour = continent)) +
@@ -425,9 +485,10 @@ tidy(lm_ger) %>%
 
 - unnest coefficients (`tidy` column)
     + mind to keep the `continent`, `country` and `rsq` columns
-- put intercept and slope in their own columns
-    + in **wide** format, only one value can be used. Discard unused columns regarding term statistics. 
-- plot slope ~ intercept (watch out the `(Intercapt)` name which needs to be between backsticks '`')
+- put **intercept** and **slope** in their own columns
+    + in **wide** format, only one value can be used. 
+    + discard unused columns.
+- plot slope ~ intercept (watch out the `(Intercept)` name which needs to be called between backsticks '`')
 - colour per continent
 - size per $r^2$ (use for `scale_size_area()` for lisibility)
 - add tendency with `geom_smooth(method = "loess")`
@@ -450,7 +511,7 @@ models %>%
 ```{r all_in_all, echo = FALSE, fig.height = 4}
 ```
 
-## animation made easy {.vs2}
+## animation made easy | takes ~ 5 minutes due to easing {.vs2}
 
 ```{r, eval = FALSE, title = "[gganimate](https://github.com/thomasp85/gganimate) by Thomas Pedersen", width = 5}
 library(gganimate)
@@ -469,7 +530,7 @@ gapminder %>%
        y = "life expectancy") +
   scale_x_log10() -> p
 animate(p)
-anim_save("img/11/gapminder2.gif")
+anim_save("gapminder2.gif")
 ```
 
 ### {.col-7}
@@ -479,7 +540,7 @@ anim_save("img/11/gapminder2.gif")
 
 ## Before we stop {.vs1}
 
-### You learned to: {.box-8 .offset-2 .intro .icon}
+### You learned to: {.box-6 .intro .icon-small}
 
 ![](img/00/kt.png)
 
@@ -491,10 +552,23 @@ anim_save("img/11/gapminder2.gif")
     + explore visually your findings
 
 
+### Acknowledgments {.box-6 .stretch .advice .icon-small}
+
+![](img/00/thanks.png)
+
+* Hadley Wickham
+* Jennifer Bryan
+* David Robinson
+* Thomas Pedersen
+* Eric Koncina ([iosp](https://github.com/koncina/iosp) _R_ package for slides)
+
 ### R workshop @Beval {.box-10 .offset-1 .intro .outline .icon-small}
 
-- _Data processing with R tidyverse_ in **May 2019**: Tuesday 14th - Friday 17th
-- **no** fees
-- **2 ECTS** for the PhD students who attend the workshop and complete a short project.
-
 ![](img/uni_elixir.png)
+
+- [_Data processing with R tidyverse_](https://rworkshop.uni.lu/) in **May 2019**: \
+Tuesday 14th - Friday 17th
+- **no** fees, registration [**here**](https://redcap.uni.lu/redcap/surveys/?s=LX84EAH7RX)
+- **2 ECTS** for the PhD students who attend the workshop and \
+complete a short project.
+
