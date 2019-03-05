@@ -12,6 +12,13 @@ library(tidyverse)
 ggplot2::theme_set(ggplot2::theme_bw(14))
 ```
 
+## Slides online {.vs3}
+
+### [Rmd on github](https://github.com/ginolhac/RSGLux-2019) {.box-6 .offset-3 .intro .outline .xx-large .center-text}
+
+[http://tinyurl.com/RSGLux-gap](https://ginolhac.github.io/RSGLux-2019/case_gapminder.html)
+
+
 
 
 ## Learning objectives {.vs2}
