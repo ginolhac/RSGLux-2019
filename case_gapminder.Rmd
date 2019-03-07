@@ -100,7 +100,7 @@ mtcars %>%
 - install the `gapminder` package
 - load `gapminder` and `tidyverse` packages
 - use the pipe `%>%` to pass `gapminder` to `ggplot()`
-- **plot** the `life expectency` (`y`) ~ `year` (`x`)
+- **plot** the `life expectency` (`lifeExp` in `y`) ~ `year` (`x`)
 - use `geom_line()`
 
 ###  warning! {.box-4 .offset-4 .warning .icon}
@@ -143,8 +143,7 @@ expectations help catching mistakes
 ```{r}
 by_country <- gapminder %>%
   mutate(year1950 = year - 1950) %>%
-  group_by(continent, country) %>%
-  group_nest()
+  group_nest(continent, country)
 by_country
 ```
 
@@ -152,7 +151,7 @@ by_country
 
 - be default the list column is named `data`
 - `year1950` will help to get meaningful intercepts
-- add `continent` to `group_by()` to keep the column along the `country`
+- add `continent` to keep it along with `country`
 
 
 ## One country example | Germany {.build}
@@ -249,8 +248,7 @@ by_country_lm %>%
   select(country, n)
 by_country_lm %>%
   mutate(n = map_int(data, nrow)) %>%
-  select(n) %>%
-  distinct()
+  distinct(n)
 ```
 
 
@@ -360,8 +358,8 @@ models
 
 ![](img/00/question.png)
 
-- plot `country` ~ `r.square` 
-- **reorder** country levels by `r.square`: _snake plot_
+- plot `country` ~ `rsq` 
+- **reorder** country levels by $r^2$ (`rsq`): _snake plot_
 - color points per continent
 - which continent shows most of the low $r^2$ values?
 
